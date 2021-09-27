@@ -9,14 +9,14 @@ const BOT_USERNAME = 'INSERT_BOT_NAME_HERE_WITHOUT_@_SYMBOL';                   
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
-const startPollJob = schedule.scheduleJob('42 * * * * *', function () {
+const startPollJob = schedule.scheduleJob('42 0 12 * * *', function () {
     sendBurgerPoll();
 });
-const stopPollJob = schedule.scheduleJob('40 * * * * *', function () {
-    stopBurgerPoll();
-});
-const reminderJob = schedule.scheduleJob('30 * * * * *', function () {
+const reminderJob = schedule.scheduleJob('30 0 17 * * *', function () {
     sendReminder();
+});
+const stopPollJob = schedule.scheduleJob('40 0 18 * * *', function () {
+    stopBurgerPoll();
 });
 const BURGER_CREW_CHAT_ID = 'burgerCrewChatId';
 const BURGER_MSG_ID = 'burgerMsgId';
@@ -171,9 +171,11 @@ async function stopBurgerPoll() {
     }
     const timePollWinner = timePollResult[Math.floor(Math.random() * timePollResult.length)];
 
-    bot.sendMessage(await storage.getItem(BURGER_CREW_CHAT_ID),
-        `Na dann bis um ${timePollWinner.text} bei ${burgerPollWinner.text}.`,
-        { parse_mode: 'Markdown', disable_web_page_preview: true })
+    if (timePollWinner !== undefined && burgerPollWinner !== undefined) {
+        bot.sendMessage(await storage.getItem(BURGER_CREW_CHAT_ID),
+            `Na dann bis um ${timePollWinner.text} bei ${burgerPollWinner.text}.`,
+            { parse_mode: 'Markdown', disable_web_page_preview: true });
+    }
 
     burgerPollResult = burgerPollResult.filter(option => option.text != burgerPollWinner.text);
     burgerArr = [null, null, null, null, null, null, null, null];
@@ -212,3 +214,8 @@ function sortByVoterCount(array, key) {
         return returnValue;
     });
 }
+
+process.on('uncaughtException', function(error) {
+    //look Ma, I died
+    console.log(error);
+ });

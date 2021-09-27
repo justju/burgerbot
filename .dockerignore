@@ -1,0 +1,17 @@
+npm-debug.log
+# dockerignore is SHIT, ich bin zu faul zu debuggen, welche der nächsten Zeilen funktioniert, deshalb bleiben alle drin.
+.node-persist
+.node-persist/
+.node-persist/*
+.node_persist/**
+node_modules
+node_modules/
+node_modules/*
+node_modules/**
+.git
+.git/
+.git/*
+.git/**
+.gitignore
+Dockerfile
+README.MD
