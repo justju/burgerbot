@@ -1,5 +1,7 @@
 FROM node:16
 
+ENV TZ="Europe/Berlin"
+
 # Create app directory
 WORKDIR /usr/src/app
 

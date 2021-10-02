@@ -1,6 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const storage = require('node-persist');
 const schedule = require('node-schedule');
+const escape = require('markdown-escape')
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = 'INSERT_TOKEN_HERE';                                              // TODO before deployment
@@ -9,13 +10,13 @@ const BOT_USERNAME = 'INSERT_BOT_NAME_HERE_WITHOUT_@_SYMBOL';                   
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
-const startPollJob = schedule.scheduleJob('42 0 12 * * *', function () {
+const startPollJob = schedule.scheduleJob('42 0 18 * * 0', function () {
     sendBurgerPoll();
 });
-const reminderJob = schedule.scheduleJob('30 0 17 * * *', function () {
+const reminderJob = schedule.scheduleJob('30 0 12 * * 2', function () {
     sendReminder();
 });
-const stopPollJob = schedule.scheduleJob('40 0 18 * * *', function () {
+const stopPollJob = schedule.scheduleJob('40 0 13 * * 2', function () {
     stopBurgerPoll();
 });
 const BURGER_CREW_CHAT_ID = 'burgerCrewChatId';
@@ -116,7 +117,15 @@ bot.on('message', async (msg) => {
 
         // if there is still an empty space
         if (emptyBurgerIndex >= 0) {
-            let burgerStoreName = msg.text;
+            let burgerStoreName = escape(msg.text);
+
+            if (burgerStoreName.length > 60) {
+                burgerStoreName = burgerStoreName.substring(0,55) + '...';
+            }
+
+            if (burgerStoreName === undefined) {
+                burgerStoreName = null;
+            }
 
             let burger;
             if (!!msg.entities && (0 in msg.entities) && !!msg.entities[0].url) {
